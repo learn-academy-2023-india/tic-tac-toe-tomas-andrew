@@ -1,45 +1,50 @@
-import React, { useState } from 'react'
-import Square from './components/Square'
-import './App.css'
+import React, { useState } from 'react';
+import Square from './components/Square';
+import calculateWinner from './components/CalculateWinner';
+import './App.css';
 
 const App = () => {
-  const [squares, setSquares] = useState(Array(9).fill(null))
-  const [xIsNext, setXIsNext] = useState(false)
-  const [oIsNext, setOIsNext] = useState(true)
+  const initialSquares = Array(9).fill(null)
 
-const handleClick = (i) => {
+  const [squares, setSquares] = useState(initialSquares)
+  const [xIsNext, setXIsNext] = useState(true)
 
-if(xIsNext){
-  squares[i] = "x"
-  setSquares([...squares]) 
-} else {
-  squares[i] = "o"
-  setSquares([...squares])
-}
-if(oIsNext){
-  squares[i] = "o"
-  setSquares([...squares])
-} else {
-  squares[i] = "x"
-  setSquares([...squares])
-}}
+  const handleClick = (i) => {
+    const newSquares = [...squares]
 
-const switchTurn = (i) => {
-  let newPlayer;
-  if(oIsNext)
-  {return newPlayer = "o"}
-  else {
-   return newPlayer = "x"
-  } 
-  
-}
+    if (newSquares[i] === null && !calculateWinner(newSquares)) {
+      newSquares[i] = xIsNext ? '🎅🏻' : '🎄'
+      setSquares(newSquares)
+      setXIsNext(!xIsNext)
+
+      if (isBoardFull(newSquares) && !calculateWinner(newSquares)) {
+        alert('Cats game!')
+        setSquares(initialSquares)
+        setXIsNext(true)
+      }
+    }
+  }
+
+  const handleRestart = () => {
+    setSquares(initialSquares)
+    setXIsNext(true);
+  }
+
+  const isBoardFull = (board) => {
+    return board.every((square) => square !== null)
+  }
 
   return (
     <>
-      <h1>Tic Tac Toe</h1>
-      <Square squares={squares} onClick={switchTurn()}handleClick={handleClick}/>
+      <h1>❄️ Tic 🛷 Tac 🛷 Toe ❄️</h1>
+      <Square squares={squares} handleClick={handleClick} />
+      <div>
+        {calculateWinner(squares) ? `Winner: ${calculateWinner(squares)}` : 'Next Player: ' + (xIsNext ? '🎅🏻' : '🎄')}
+      </div>
+      <button onClick={handleRestart}>Restart Game</button>
     </>
   )
 }
 
 export default App
+
